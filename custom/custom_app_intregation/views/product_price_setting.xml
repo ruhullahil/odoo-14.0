@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_price_setup_view_form" model="ir.ui.view">
+        <field name="name">product_price_setup_view_form</field>
+        <field name="model">product.price.setup</field>
+        <field name="arch" type="xml">
+            <form string="product_price_setup_form">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" invisible="1"/>
+                            <field name="product_id"/>
+                        </group>
+                        <group>
+                            <field name="sale_group"/>
+                            <field name="price"/>
+                        </group>
+
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="product_price_setup_view_tree" model="ir.ui.view">
+        <field name="name">product_price_setup_view_tree</field>
+        <field name="model">product.price.setup</field>
+        <field name="arch" type="xml">
+            <tree string="product_price_setup_tree">
+                <field name="product_id"/>
+                <field name="sale_group"/>
+                <field name="price"/>
+            </tree>
+        </field>
+    </record>
+    <record id="producr_price_setup_action" model="ir.actions.act_window">
+        <field name="name">Price Setup</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.price.setup</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="product_price_setup" name="Price Setup" parent="sale.menu_sale_config" action="producr_price_setup_action" sequence="100"/>
+</odoo>

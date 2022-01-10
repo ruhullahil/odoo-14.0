@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_dept_setup,custom_app_intregation.custom_sale_setup,model_sale_department,base.group_user,1,1,1,1
+access_product_price_list_setting,custom_app_intregation.product_price_list_setting,model_product_price_setup,base.group_user,1,1,1,1
+access_product_report_by_dept,custom_app_intregation.sale_report_dept,model_sale_department_report_wizard,base.group_user,1,1,1,1
+access_vehicle_admin,custom_app_intregation.vehicle_reg,model_transport_vehicle_register,base.group_user,1,1,1,1

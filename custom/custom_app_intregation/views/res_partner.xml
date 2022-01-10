@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="res_partner_form_inherit" model="ir.ui.view">
+            <field name="name">res.partner.res_partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='email']" position="after">
+                    <field name="lat"/>
+                    <field name="lon"/>
+                </xpath>
+<!--                <xpath expr="//field[@name='example_field']" position="attributes">-->
+<!--                    <attribute name="invisible">True</attribute>-->
+<!--                </xpath>-->
+            </field>
+        </record>
+    </data>
+</odoo>
