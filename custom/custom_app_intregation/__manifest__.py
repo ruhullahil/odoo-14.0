@@ -31,6 +31,8 @@
         'views/product_price_setting.xml',
         'views/inherit_sale_order.xml',
         'views/res_partner.xml',
+        'views/customer_product_return.xml',
+        'views/vehicle_setup.xml',
         'views/inherit_product_template.xml',
         'wizard/sale_report_by_dept.xml',
         'reports/sale_report_by_dept.xml',

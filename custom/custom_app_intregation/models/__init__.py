@@ -9,3 +9,4 @@ from . import inherit_product_temlate
 from . import vahicle
 from . import inherit_stock_location
 from . import sale_return
+# from . import inherit_stock_picking

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="customer_product_view_form" model="ir.ui.view">
+            <field name="name">customer_product_view_form</field>
+            <field name="model">customer.product.return</field>
+            <field name="arch" type="xml">
+                <form string="customer_product_form">
+                    <header>
+                        <field name="status" widget="statusbar"/>
+                        <button name="done_button" type="object" string="Post"
+                                attrs="{'invisible':[('status','=','done')]}" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+
+                        <h1 class="mt0">
+                            <field name="name" readonly="1" force_save="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="customer_id"/>
+                            </group>
+                            <group>
+                                <field name="location_id"/>
+                            </group>
+
+                        </group>
+                        <notebook>
+                            <page name="products" string="Products">
+                                <field name="return_order_line">
+                                    <tree name="product_return" editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="price"/>
+                                        <field name="default_product_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="product_return_view_tree" model="ir.ui.view">
+            <field name="name">Product_return_view_tree</field>
+            <field name="model">customer.product.return</field>
+            <field name="arch" type="xml">
+                <tree string="return_tree">
+                    <field name="name"/>
+                    <field name="customer_id"/>
+                    <field name="location_id"/>
+                    <field name="status" widget="badge" decoration-info="status == 'done'" decoration-danger="status == 'draft'"/>
+                </tree>
+            </field>
+        </record>
+        <record id="product_return_action" model="ir.actions.act_window">
+            <field name="name">Return Product</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">customer.product.return</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!-- This Menu Item must have a parent and an action -->
+        <!-- This Menu Item will appear in the Upper bar, That's why It needs NO parent or action -->
+        <menuitem id="menu_root_return_order" name="Return" parent="sale.sale_menu_root" sequence="11"/>
+        <menuitem id="product_return_menu_item" name="Return Order" parent="menu_root_return_order"
+                  action="product_return_action" sequence="1"/>
+
+    </data>
+</odoo>

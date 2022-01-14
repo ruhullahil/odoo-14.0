@@ -9,6 +9,7 @@ class VehicleModel(models.Model):
     name = fields.Char(string='VIN', required=True)
     related_location = fields.Many2one('stock.location', string='Related Location')
     related_route = fields.Many2one('stock.location.route', string='Related Route')
+    sales_man = fields.Many2one('res.users', string='Sales Man')
 
     def create_location(self, location_name):
         location = self.env['stock.location'].sudo().search([('name', '=', location_name.lower())], limit=1)
@@ -56,6 +57,7 @@ class VehicleModel(models.Model):
             })
         return route
 
+    @api.model
     def create(self, vals_list):
         if 'name' not in vals_list:
             raise ValidationError('Name field Must need to Fill Up')
