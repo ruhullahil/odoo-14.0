@@ -93,7 +93,7 @@ class AccessToken(http.Controller):
             response=json.dumps(
                 {
                     "uid": uid,
-		    "user_name":request.env.user.name
+                    "user_name": request.env.user.name,
                     "user_context": request.session.get_context() if uid else {},
                     "company_id": request.env.user.company_id.id if uid else None,
                     "company_ids": request.env.user.company_ids.ids if uid else None,

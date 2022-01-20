@@ -10,3 +10,4 @@ from . import vahicle
 from . import inherit_stock_location
 from . import sale_return
 # from . import inherit_stock_picking
+from . import sale_make_invoice_advance_inherit

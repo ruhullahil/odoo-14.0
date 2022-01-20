@@ -61,6 +61,12 @@ class VehicleModel(models.Model):
     def create(self, vals_list):
         if 'name' not in vals_list:
             raise ValidationError('Name field Must need to Fill Up')
+        if 'sales_man' not in vals_list:
+            raise ValidationError('Sales Man Must be assign')
+        sals_man = vals_list['sales_man']
+        vhicle = self.sudo().search([('sales_man', '=', sals_man)])
+        if vhicle:
+            raise ValidationError('This sales man already assigned on {}'.format(vhicle.name))
         name = vals_list['name']
         location = self.create_location(name)
         rute = self.create_route(name, location)
