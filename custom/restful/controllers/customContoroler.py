@@ -302,7 +302,7 @@ class ModelName(http.Controller):
         values['data'] = temp
         return json.dumps(values)
 
-    @http.route(['/api/create_sale_order/'], type="json", auth="none", website=True, method=['POST'],
+    @http.route(['/api/create_sale_order/'], type="json", auth="none", website=False, method=['POST'],
                 csrf=False)
     @validate_token
     def create_sale_order(self, **payload):
@@ -329,7 +329,7 @@ class ModelName(http.Controller):
             }
             return json.dumps(values)
 
-    @http.route(['/api/create_payment_order/'], type="json", auth="none", website=True, method=['POST'],
+    @http.route(['/api/create_payment_order/'], type="json", auth="none", website=False, method=['POST'],
                 csrf=False)
     @validate_token
     def create_payment(self, **payload):
@@ -381,4 +381,17 @@ class ModelName(http.Controller):
             partners_lst.append(temp)
         values['success'] = True
         values['data'] = partners_lst
+        return json.dumps(values)
+
+    @http.route(['/api/create_customer/'], type="json", auth="none", website=False, method=['POST'],
+                csrf=False)
+    @validate_token
+    def create_customer(self, **payload):
+        values = {}
+        payload = request.httprequest.data.decode()
+        payload = json.loads(payload)
+        data = request.env['res.partner'].sudo().create(payload)
+        if data:
+            values['success'] = True
+
         return json.dumps(values)
