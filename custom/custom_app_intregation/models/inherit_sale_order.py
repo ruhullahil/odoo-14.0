@@ -17,6 +17,7 @@ class SaleOrder(models.Model):
             for line in rec.order_line:
                 line.price_unit = line.get_price_list_on_product()
                 # line.write({'price_unit': line.get_price_list_on_product()})
+
     @api.onchange('vehicle_id')
     def _change_vehicle_wise_route(self):
         for rec in self:
@@ -25,6 +26,10 @@ class SaleOrder(models.Model):
             for line in rec.order_line:
                 line.route_id = line.order_id.vehicle_id.related_route
 
+    @api.onchange('partner_id')
+    def _change_dept(self):
+        for rec in self:
+            rec.department_id = rec.partner_id.customer_dept
 
 
 class SaleOrderLine(models.Model):

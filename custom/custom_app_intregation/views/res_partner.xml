@@ -11,6 +11,7 @@
                 <xpath expr="//field[@name='email']" position="after">
                     <field name="lat"/>
                     <field name="lon"/>
+                    <field name="customer_dept"/>
                 </xpath>
 <!--                <xpath expr="//field[@name='example_field']" position="attributes">-->
 <!--                    <attribute name="invisible">True</attribute>-->

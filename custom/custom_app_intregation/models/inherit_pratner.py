@@ -7,3 +7,4 @@ class ModelName(models.Model):
 
     lat = fields.Float(string='Latitude')
     lon = fields.Float(string='Longitude')
+    customer_dept = fields.Many2one('sale.department', string='Sale Department')

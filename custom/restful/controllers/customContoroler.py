@@ -9,13 +9,18 @@ from datetime import datetime
 
 class ModelName(http.Controller):
 
-    @http.route(['/api/get_order/'], type="http", auth="none", website=True, method=['GET'],
+    @http.route(['/api/get_order/', '/api/get_order/<id>'], type="http", auth="none", website=True, method=['GET'],
                 csrf=False)
     @validate_token
-    def get_order(self):
+    def get_order(self, id=None):
         values = {}
+        domain = list()
         user = request.env.user.id
-        datas = request.env['sale.order'].sudo().search([("user_id", "=", user)], limit=500, order='id desc')
+        if id:
+            domain.append(("id", "=", id))
+        else:
+            domain.append(("user_id", "=", user))
+        datas = request.env['sale.order'].sudo().search(domain, limit=500, order='id desc')
 
         if datas:
             values['success'] = True
@@ -29,12 +34,21 @@ class ModelName(http.Controller):
                         'total': dt.price_subtotal
                     }
                     order_line.append(line_temp)
+                picking_ids = list()
+                for line in data.picking_ids:
+                    picking_temp = {
+                        'delever_id': line.id,
+                        'status': line.state,
+                        'dest_id': line.location_dest_id.id,
+                    }
+                    picking_ids.append(picking_temp)
                 temp = {
                     'name': data.name,
                     'id': data.id,
                     'customer': data.partner_id.name,
                     'total': data.amount_total,
-                    'order_line': order_line
+                    'order_line': order_line,
+                    'picking_line': picking_ids
 
                 }
                 order_list.append(temp)
@@ -61,19 +75,20 @@ class ModelName(http.Controller):
         values['success'] = True
         return json.dumps(values)
 
-    @http.route(['/api/get_delivery/<id>'], type="http", auth="none", website=True, method=['GET'],
+    @http.route(['/api/get_delivery/<id>', '/api/get_delivery/'], type="http", auth="none", website=True,
+                method=['GET'],
                 csrf=False)
     @validate_token
-    def get_delivery(self, id):
+    def get_delivery(self, id=None):
         values = {}
         domain = list()
         user = request.env.user.id
-        if int(id) == 0:
+        if not id:
             domain.append('|')
             domain.append(("user_id", "=", user))
             domain.append(('create_uid', '=', user))
         else:
-            domain.append(('location_id', '=', id))
+            domain.append(('id', '=', id))
 
         datas = request.env['stock.picking'].sudo().search(domain, limit=500, order='id desc')
 
@@ -91,8 +106,10 @@ class ModelName(http.Controller):
                 temp = {
                     'name': data.name,
                     'id': data.id,
+                    'sale_id': data.sale_id.id,
+                    'sale_order': data.sale_id.name,
                     'customer': data.partner_id.name,
-                    'order_line': order_line
+                    'order_line': order_line,
 
                 }
                 order_list.append(temp)
@@ -163,21 +180,26 @@ class ModelName(http.Controller):
         values['data'] = quant_list
         return json.dumps(values)
 
-    @http.route(['/api/get_invoices/'], type="http", auth="none", website=True, method=['GET'],
+    @http.route(['/api/get_invoices/', '/api/get_invoices/<id>'], type="http", auth="none", website=True,
+                method=['GET'],
                 csrf=False)
     @validate_token
-    def get_invoices(self):
+    def get_invoices(self, id=None):
         values = {}
-        datas = request.env['account.move'].sudo().search([], limit=700, order='id desc')
+        domain = list()
+        domain.append(('move_type', '=', 'out_invoice'))
+        if id:
+            domain.append(('id', '=', id))
+        datas = request.env['account.move'].sudo().search(domain, limit=700, order='id desc')
         if datas:
             values['success'] = True
             order_list = list()
             for data in datas:
                 order_line = list()
-                for dt in data.order_line:
+                for dt in data.invoice_line_ids:
                     line_temp = {
                         'product': dt.name,
-                        'quantity': dt.quqntity,
+                        'quantity': dt.quantity,
                         'total': dt.price_subtotal
                     }
                     order_line.append(line_temp)
@@ -185,6 +207,7 @@ class ModelName(http.Controller):
                     'name': data.name,
                     'id': data.id,
                     'customer': data.partner_id.name,
+                    'sale_order': data.invoice_origin if data.invoice_origin else None,
                     'total': data.amount_total,
                     'order_line': order_line
 
@@ -277,4 +300,85 @@ class ModelName(http.Controller):
         }
         temp.append(t)
         values['data'] = temp
+        return json.dumps(values)
+
+    @http.route(['/api/create_sale_order/'], type="json", auth="none", website=True, method=['POST'],
+                csrf=False)
+    @validate_token
+    def create_sale_order(self, **payload):
+        values = {}
+        payload = request.httprequest.data.decode()
+        payload = json.loads(payload)
+        order_dict = dict()
+        for key, value in payload.items():
+            temp_list = list()
+            if isinstance(value, dict):
+                temp_list.append((0, 0, value))
+            if isinstance(value, list):
+                for val in value:
+                    temp_list.append((0, 0, val))
+            order_dict[key] = temp_list if temp_list else value
+        order = request.env['sale.order'].sudo().create(order_dict)
+        if order:
+            values['success'] = True
+            value['data'] = {
+                'order_id': order.id,
+                'order_name': order.name,
+                'customer_id': order.partner_id.id,
+                'customer_name': order.partner_id.name
+            }
+            return json.dumps(values)
+
+    @http.route(['/api/create_payment_order/'], type="json", auth="none", website=True, method=['POST'],
+                csrf=False)
+    @validate_token
+    def create_payment(self, **payload):
+        values = {}
+        payload = request.httprequest.data.decode()
+        payload = json.loads(payload)
+        order_dict = dict()
+        for key, value in payload.items():
+            temp_list = list()
+            if isinstance(value, dict):
+                temp_list.append((0, 0, value))
+            if isinstance(value, list):
+                for val in value:
+                    temp_list.append((0, 0, val))
+            order_dict[key] = temp_list if temp_list else value
+        order = request.env['account.payment'].sudo().create(order_dict)
+        if order:
+            values['success'] = True
+            value['data'] = {
+                'order_id': order.id,
+                'order_name': order.name,
+                'customer_id': order.partner_id.id,
+                'customer_name': order.partner_id.name
+            }
+            return json.dumps(values)
+
+    @http.route(['/api/get_customer/', '/api/get_customer/<id>'], type="http", auth="none", website=True,
+                method=['GET'],
+                csrf=False)
+    @validate_token
+    def get_customer(self, id=None):
+        values = {}
+        domain = list()
+        if id:
+            domain.append(('id', '=', id))
+        partners = request.env['res.partner'].sudo().search(domain, limit=500, order='id desc')
+        if not partners:
+            values['success'] = False
+            return json.dumps(values)
+        partners_lst = list()
+        for line in partners:
+            temp = {
+                'id': line.id,
+                'name': line.name,
+                'address': str(line.street) + ' ' + str(line.state_id.name),
+                'phone_number': line.phone,
+                'customer_dept': line.customer_dept.id if line.customer_dept else None
+            }
+            partners_lst.append(temp)
+        values['success'] = True
+        values['data'] = partners_lst
         return json.dumps(values)
