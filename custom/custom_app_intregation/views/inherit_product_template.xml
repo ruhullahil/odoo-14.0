@@ -10,6 +10,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='barcode']" position="after">
                     <field name="is_battle_include"/>
+                    <field name="discount"/>
                 </xpath>
 <!--                <xpath expr="//field[@name='example_field']" position="attributes">-->
 <!--                    <attribute name="invisible">True</attribute>-->

@@ -12,6 +12,7 @@
                         </group>
                         <group>
                             <field name="sales_man"/>
+                            <field name="enable_direct_sale"/>
                         </group>
 
                     </group>

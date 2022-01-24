@@ -87,6 +87,9 @@ class ModelName(http.Controller):
             domain.append('|')
             domain.append(("user_id", "=", user))
             domain.append(('create_uid', '=', user))
+            so_ids = request.env['sale.order'].sudo().search(domain).ids
+            domain = [('sale_id', 'in', so_ids), ('state', 'not in', ['done', 'cancel'])]
+
         else:
             domain.append(('id', '=', id))
 
@@ -153,6 +156,7 @@ class ModelName(http.Controller):
             order.button_validate()
             if order.state == 'done':
                 values['success'] = True
+                self.create_invoices(order.sale_id.id)
             else:
                 values['success'] = False
             return json.dumps(values)
@@ -293,9 +297,11 @@ class ModelName(http.Controller):
         temp = list()
         t = {
             'name': request.env.user.name,
-            'location_id': location.related_location.id,
-            'location_name': location.name,
-            'sale_count': sale_count
+            'location_id': location.related_location.id if location else 0,
+            'location_name': location.name if location else None,
+            'sale_count': sale_count,
+            'is_direct_sale': location.enable_direct_sale,
+            'direct_route': location.direct_route.id if location.direct_route.id else 0
 
         }
         temp.append(t)
@@ -347,8 +353,9 @@ class ModelName(http.Controller):
             order_dict[key] = temp_list if temp_list else value
         order = request.env['account.payment'].sudo().create(order_dict)
         if order:
+            order.action_post()
             values['success'] = True
-            value['data'] = {
+            values['data'] = {
                 'order_id': order.id,
                 'order_name': order.name,
                 'customer_id': order.partner_id.id,
@@ -394,4 +401,56 @@ class ModelName(http.Controller):
         if data:
             values['success'] = True
 
+        return json.dumps(values)
+
+    @http.route(['/api/get_product/', '/api/get_product/<id>'], type="http", auth="none", website=True,
+                method=['GET'],
+                csrf=False)
+    @validate_token
+    def get_products(self, id=None):
+        values = dict()
+        values['success'] = False
+        domain = list()
+        if id:
+            domain.append(('id', '=', id))
+        products = request.env['product.product'].sudo().search(domain, limit=600, order='id desc')
+        product_list = []
+        if products:
+            for product in products:
+                temp = dict()
+                temp['product_id'] = product.id
+                temp['product_tmpl_id'] = product.product_tmpl_id.id
+                temp['name'] = product.product_tmpl_id.name
+                temp['unit_price'] = product.product_tmpl_id.lst_price
+                temp['include_bottle'] = product.product_tmpl_id.is_battle_include
+                temp['discount'] = product.product_tmpl_id.discount
+                base_url = request.env['ir.config_parameter'].get_param('web.base.url')
+                temp['img'] = base_url+'/web/image?model=product.template&id={}&field=image_1024'.format(product.product_tmpl_id.id)
+                product_list.append(temp)
+            values['success'] = True
+            values['data'] = product_list
+        return json.dumps(values)
+
+    @http.route(['/api/get_product_price_setup/', '/api/get_product_price_setup/<id>'], type="http", auth="none",
+                website=True,
+                method=['GET'],
+                csrf=False)
+    @validate_token
+    def get_product_price_setup(self, id=None):
+        values = {}
+        values['success'] = False
+        domain = list()
+        if id:
+            domain.append(('product_id', '=', id))
+        setups = request.env['product.price.setup'].sudo().search(domain)
+        setup_list = list()
+        if setups:
+            for setup in setups:
+                temp = {
+                    'product_id': setup.product_id.id,
+                    'dept_id': setup.sale_group.id,
+                    'price': setup.price,
+                }
+                setup_list.append(temp)
+            values['data'] = setup_list
         return json.dumps(values)
