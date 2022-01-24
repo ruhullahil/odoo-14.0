@@ -31,6 +31,12 @@ class SaleOrder(models.Model):
         for rec in self:
             rec.department_id = rec.partner_id.customer_dept
 
+    @api.model
+    def create(self, vals):
+        if 'department_id' not in vals:
+            vals['department_id'] = self.env['res.partner'].sudo().search([('id', '=', vals['partner_id'])], limit=1).customer_dept.id
+        return super(SaleOrder, self).create(vals)
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

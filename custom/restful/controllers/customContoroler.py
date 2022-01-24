@@ -318,21 +318,28 @@ class ModelName(http.Controller):
         order_dict = dict()
         for key, value in payload.items():
             temp_list = list()
+            if not value:
+                continue
             if isinstance(value, dict):
                 temp_list.append((0, 0, value))
             if isinstance(value, list):
+                temp = dict()
                 for val in value:
-                    temp_list.append((0, 0, val))
+                    for inner_key, inn_value in val.items():
+                        if not inn_value:
+                            continue
+                        temp[inner_key] = inn_value
+                    temp_list.append((0, 0, temp))
             order_dict[key] = temp_list if temp_list else value
         order = request.env['sale.order'].sudo().create(order_dict)
         if order:
             values['success'] = True
-            value['data'] = {
-                'order_id': order.id,
-                'order_name': order.name,
-                'customer_id': order.partner_id.id,
-                'customer_name': order.partner_id.name
-            }
+            # value['data'] = {
+            #     'order_id': order.id,
+            #     'order_name': order.name,
+            #     'customer_id': order.partner_id.id,
+            #     'customer_name': order.partner_id.name
+            # }
             return json.dumps(values)
 
     @http.route(['/api/create_payment_order/'], type="json", auth="none", website=False, method=['POST'],
@@ -425,7 +432,8 @@ class ModelName(http.Controller):
                 temp['include_bottle'] = product.product_tmpl_id.is_battle_include
                 temp['discount'] = product.product_tmpl_id.discount
                 base_url = request.env['ir.config_parameter'].get_param('web.base.url')
-                temp['img'] = base_url+'/web/image?model=product.template&id={}&field=image_1024'.format(product.product_tmpl_id.id)
+                temp['img'] = base_url + '/web/image?model=product.template&id={}&field=image_1024'.format(
+                    product.product_tmpl_id.id)
                 product_list.append(temp)
             values['success'] = True
             values['data'] = product_list
