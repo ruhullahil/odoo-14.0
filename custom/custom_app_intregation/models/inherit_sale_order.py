@@ -53,7 +53,7 @@ class SaleOrderLine(models.Model):
         for rec in self:
             price_list = self.env['product.price.setup'].sudo().search(
                 [('product_id', '=', rec.product_id.id), ('sale_group', '=', rec.order_id.department_id.id)], limit=1,
-                order='id desc').discount
+                order='id desc').parcent
             if not price_list:
                 price_list = rec.product_id.product_tmpl_id.discount
 
