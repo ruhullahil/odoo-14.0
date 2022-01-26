@@ -49,6 +49,13 @@ class SaleOrderLine(models.Model):
             if not price_list:
                 price_list = rec.product_id.product_tmpl_id.list_price
             return price_list
+    def get_discount(self):
+        for rec in self:
+            price_list = self.env['product.price.setup'].sudo().search(
+                [('product_id', '=', rec.product_id.id), ('sale_group', '=', rec.order_id.department_id.id)], limit=1,
+                order='id desc').discount
+            if not price_list:
+                price_list = rec.product_id.product_tmpl_id.discount
 
     @api.onchange('product_uom', 'product_uom_qty')
     def product_uom_change(self):
@@ -67,4 +74,5 @@ class SaleOrderLine(models.Model):
             )
             self.price_unit = self.get_price_list_on_product()
             self.route_id = self.order_id.vehicle_id.related_route.id
+            self.discount = self.get_discount()
             # self.price_unit = 5
