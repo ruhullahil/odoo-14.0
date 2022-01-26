@@ -14,6 +14,7 @@
                         <group>
                             <field name="sale_group"/>
                             <field name="price"/>
+                            <field name="parcent"/>
                         </group>
 
                     </group>

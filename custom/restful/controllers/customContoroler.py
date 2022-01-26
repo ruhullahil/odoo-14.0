@@ -449,7 +449,7 @@ class ModelName(http.Controller):
         values['success'] = False
         domain = list()
         if id:
-            domain.append(('product_id', '=', id))
+            domain.append(('product_id', '=', int(id)))
         setups = request.env['product.price.setup'].sudo().search(domain)
         setup_list = list()
         if setups:
@@ -461,4 +461,42 @@ class ModelName(http.Controller):
                 }
                 setup_list.append(temp)
             values['data'] = setup_list
+        return json.dumps(values)
+
+    @http.route(['/api/get_delivery_from_so/<id>', ], type="http", auth="none",
+                website=True,
+                method=['GET'],
+                csrf=False)
+    @validate_token
+    def get_delivery_from_so(self, id=None):
+        values = {}
+        domain = []
+        domain.append(('sale_id', '=', int(id)))
+        datas = request.env['stock.picking'].sudo().search(domain, limit=3, order='id desc')
+        if datas:
+            values['success'] = True
+            order_list = list()
+            for data in datas:
+                order_line = list()
+                for dt in data.move_ids_without_package:
+                    line_temp = {
+                        'product': dt.product_id.product_tmpl_id.name,
+                        'quantity': dt.product_uom_qty,
+                    }
+                    order_line.append(line_temp)
+                temp = {
+                    'name': data.name,
+                    'id': data.id,
+                    'sale_id': data.sale_id.id,
+                    'sale_order': data.sale_id.name,
+                    'customer': data.partner_id.name,
+                    'order_line': order_line,
+
+                }
+                order_list.append(temp)
+                values['data'] = order_list
+        else:
+            values['success'] = False
+            values['data'] = list()
+
         return json.dumps(values)

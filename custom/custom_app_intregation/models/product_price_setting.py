@@ -15,3 +15,4 @@ class ProductPriceDescription(models.Model):
     product_id = fields.Many2one('product.product', string='Product')
     sale_group = fields.Many2one('sale.department', string='Department')
     price = fields.Float(string='Price', store=True)
+    parcent = fields.Float(string="Discount")
