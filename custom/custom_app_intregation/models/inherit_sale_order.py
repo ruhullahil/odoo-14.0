@@ -24,7 +24,7 @@ class SaleOrder(models.Model):
             # print('rec : ', rec)
             # rec.order_line = None
             for line in rec.order_line:
-                line.route_id = line.order_id.vehicle_id.related_route
+                line.route_id = self.vehicle_id.direct_route if self.vehicle_id.enable_direct_sale else self.vehicle_id.related_route.id
 
     @api.onchange('partner_id')
     def _change_dept(self):
@@ -34,7 +34,8 @@ class SaleOrder(models.Model):
     @api.model
     def create(self, vals):
         if 'department_id' not in vals:
-            vals['department_id'] = self.env['res.partner'].sudo().search([('id', '=', vals['partner_id'])], limit=1).customer_dept.id
+            vals['department_id'] = self.env['res.partner'].sudo().search([('id', '=', vals['partner_id'])],
+                                                                          limit=1).customer_dept.id
         return super(SaleOrder, self).create(vals)
 
 
@@ -49,6 +50,7 @@ class SaleOrderLine(models.Model):
             if not price_list:
                 price_list = rec.product_id.product_tmpl_id.list_price
             return price_list
+
     def get_discount(self):
         for rec in self:
             price_list = self.env['product.price.setup'].sudo().search(
@@ -73,6 +75,6 @@ class SaleOrderLine(models.Model):
                 fiscal_position=self.env.context.get('fiscal_position')
             )
             self.price_unit = self.get_price_list_on_product()
-            self.route_id = self.order_id.vehicle_id.related_route.id
+            self.route_id = self.order_id.vehicle_id.direct_route if self.order_id.vehicle_id.enable_direct_sale else self.order_id.vehicle_id.related_route.id
             self.discount = self.get_discount()
             # self.price_unit = 5

@@ -14,7 +14,7 @@ class VehicleModel(models.Model):
     sales_man = fields.Many2one('res.users', string='Sales Man')
 
     def create_direct_route(self, route_name, location):
-        route = self.env['stock.location.route'].sudo().search([('name', '=', 'direct '+route_name.lower())], limit=1)
+        route = self.env['stock.location.route'].sudo().search([('name', '=', 'direct ' + route_name.lower())], limit=1)
 
         if not route:
             company_id = self.env.company.id
@@ -32,13 +32,15 @@ class VehicleModel(models.Model):
             rules = []
             rules.append((0, 0, pack))
             route = self.env['stock.location.route'].sudo().create({
-                'name': 'direct '+route_name.lower(),
+                'name': 'direct ' + route_name.lower(),
                 'sequence': 10 + len(route_name),
                 'sale_selectable': True,
                 'product_selectable': True,
                 'rule_ids': rules
             })
         return route
+
+
 
     def create_location(self, location_name):
         location = self.env['stock.location'].sudo().search([('name', '=', location_name.lower())], limit=1)

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="vehicle_unload_view_form" model="ir.ui.view">
+        <field name="name">vehicle_unload_view_form</field>
+        <field name="model">vehicle.unload</field>
+        <field name="arch" type="xml">
+            <form string="vehicle_unload_form">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                    <button name="unload" type="object" string="Unload" class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="submit" type="object" string="Submit" class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'submitted')]}"/>
+                    <button name="validate" type="object" string="Validate"
+                            groups="custom_app_intregation.vehicle_unload_approver" class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'need_examined')]}"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="vehicle_id"/>
+                        </group>
+                        <group>
+
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="vehicle_unload" string="Products">
+                            <field name="unload_line" widget="one2many" options="{'no_create ': True}">
+                                <tree string="Products" editable="bottom">
+                                    <field name="location"/>
+                                    <field name="product_id"/>
+                                    <field name="total_count" groups="custom_app_intregation.vehicle_unload_approver"/>
+                                    <field name="good_condition"/>
+                                    <field name="broken_condition"/>
+                                    <field name="spoil_condition"/>
+                                    <field name="lost_condition"
+                                           groups="custom_app_intregation.vehicle_unload_approver"/>
+                                </tree>
+                            </field>
+
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="vehicle_unload_view_tree" model="ir.ui.view">
+        <field name="name">vehicle_unload_view_tree</field>
+        <field name="model">vehicle.unload</field>
+        <field name="arch" type="xml">
+            <tree string="vehicle_unload_tree">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="location_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="vehicle_unload_action" model="ir.actions.act_window">
+        <field name="name">Return Product</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">vehicle.unload</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!-- This Menu Item must have a parent and an action -->
+    <!-- This Menu Item will appear in the Upper bar, That's why It needs NO parent or action -->
+    <!--        <menuitem id="menu_root_return_order" name="Return" parent="sale.sale_menu_root" sequence="11"/>-->
+    <menuitem id="vehicle_unload_menu" name="Vehicle Unload" parent="custom_app_intregation.menu_root_return_order"
+              action="vehicle_unload_action" sequence="2"/>
+</odoo>

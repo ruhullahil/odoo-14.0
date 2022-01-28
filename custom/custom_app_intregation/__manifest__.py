@@ -25,6 +25,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
         'views/views.xml',
         'views/templates.xml',
         'views/sale_dept.xml',
@@ -34,6 +35,7 @@
         'views/customer_product_return.xml',
         'views/vehicle_setup.xml',
         'views/inherit_product_template.xml',
+        'views/vehicle_unload.xml'
         # 'wizard/sale_report_by_dept.xml',
         # 'reports/sale_report_by_dept.xml',
     ],

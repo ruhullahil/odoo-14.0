@@ -1,10 +1,20 @@
+import ast
 import json
 
 from odoo import http
 from odoo.addons.restful.controllers.main import validate_token
-from odoo.http import request
+from odoo.http import request, JsonRequest
 from datetime import date
 from datetime import datetime
+
+
+# def _json_response(self, result=None, error=None):
+#     if result:
+#         result = eval(result)
+#     return json.dumps(result)
+#
+#
+# JsonRequest._json_response = _json_response
 
 
 class ModelName(http.Controller):
@@ -334,12 +344,12 @@ class ModelName(http.Controller):
         order = request.env['sale.order'].sudo().create(order_dict)
         if order:
             values['success'] = True
-            # value['data'] = {
-            #     'order_id': order.id,
-            #     'order_name': order.name,
-            #     'customer_id': order.partner_id.id,
-            #     'customer_name': order.partner_id.name
-            # }
+            values['data'] = {
+                'order_id': order.id,
+                'order_name': order.name,
+                'customer_id': order.partner_id.id,
+                'customer_name': order.partner_id.name
+            }
             return json.dumps(values)
 
     @http.route(['/api/create_payment_order/'], type="json", auth="none", website=False, method=['POST'],
