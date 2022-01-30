@@ -350,7 +350,7 @@ class ModelName(http.Controller):
                 'customer_id': order.partner_id.id,
                 'customer_name': order.partner_id.name
             }
-            return json.dumps(values)
+            return values
 
     @http.route(['/api/create_payment_order/'], type="json", auth="none", website=False, method=['POST'],
                 csrf=False)
@@ -400,7 +400,9 @@ class ModelName(http.Controller):
                 'name': line.name,
                 'address': str(line.street) + ' ' + str(line.state_id.name),
                 'phone_number': line.phone,
-                'customer_dept': line.customer_dept.id if line.customer_dept else None
+                'customer_dept': line.customer_dept.id if line.customer_dept else None,
+                'credit': line.credit if line.credit else None,
+                'credit_limit': line.credit_limit if line.credit_limit else None
             }
             partners_lst.append(temp)
         values['success'] = True
@@ -468,12 +470,13 @@ class ModelName(http.Controller):
                     'product_id': setup.product_id.id,
                     'dept_id': setup.sale_group.id,
                     'price': setup.price,
+                    'discount': setup.parcent,
                 }
                 setup_list.append(temp)
             values['data'] = setup_list
         return json.dumps(values)
 
-    @http.route(['/api/get_delivery_from_so/<id>', ], type="http", auth="none",
+    @http.route(['/api/get_delivery_from_so/<id>'], type="http", auth="none",
                 website=True,
                 method=['GET'],
                 csrf=False)
@@ -510,3 +513,81 @@ class ModelName(http.Controller):
             values['data'] = list()
 
         return json.dumps(values)
+
+    @http.route(['/api/write_sale_order/<id>'], type="json", auth="none",
+                website=True,
+                method=['POST'],
+                csrf=False)
+    @validate_token
+    def put_sale_order(self, id=None, **payload):
+        if not id:
+            return {'success': False}
+        payload = request.httprequest.data.decode()
+        payload = json.loads(payload)
+        so = request.env['sale.order'].sudo().search([('id', '=', id)])
+        if not so:
+            return {'success': False}
+        order_dict = dict()
+        for key, value in payload.items():
+            temp_list = list()
+            if not value:
+                continue
+            if isinstance(value, dict):
+                temp_list.append((0, 0, value))
+            if isinstance(value, list):
+                temp = dict()
+                for val in value:
+                    for inner_key, inn_value in val.items():
+                        if not inn_value:
+                            continue
+                        temp[inner_key] = inn_value
+                    temp_list.append((0, 0, temp))
+            order_dict[key] = temp_list if temp_list else value
+        order = so.sudo().write(order_dict)
+        if order:
+            values = {
+                'success': True,
+                'order_id': so.id,
+                'order_name': so.name,
+                'customer_id': so.partner_id.id,
+                'customer_name': so.partner_id.name
+            }
+            return values
+
+    @http.route(['/api/write_partner/<id>'], type="json", auth="none",
+                website=True,
+                method=['POST'],
+                csrf=False)
+    @validate_token
+    def write_partner(self, id=None, **payload):
+        if not id:
+            return {'success': False}
+        payload = request.httprequest.data.decode()
+        payload = json.loads(payload)
+        so = request.env['res.partner'].sudo().search([('id', '=', id)])
+        if not so:
+            return {'success': False}
+        order_dict = dict()
+        for key, value in payload.items():
+            temp_list = list()
+            if not value:
+                continue
+            if isinstance(value, dict):
+                temp_list.append((0, 0, value))
+            if isinstance(value, list):
+                temp = dict()
+                for val in value:
+                    for inner_key, inn_value in val.items():
+                        if not inn_value:
+                            continue
+                        temp[inner_key] = inn_value
+                    temp_list.append((0, 0, temp))
+            order_dict[key] = temp_list if temp_list else value
+        order = so.sudo().write(order_dict)
+        if order:
+            values = {
+                'success': True,
+                'id': so.id,
+                'order_name': so.name,
+            }
+            return values
