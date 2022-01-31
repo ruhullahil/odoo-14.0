@@ -564,7 +564,7 @@ class ModelName(http.Controller):
             return {'success': False}
         payload = request.httprequest.data.decode()
         payload = json.loads(payload)
-        so = request.env['res.partner'].sudo().search([('id', '=', id)])
+        so = request.env['res.partner'].sudo().search([('id', '=', int(id))])
         if not so:
             return {'success': False}
         order_dict = dict()
