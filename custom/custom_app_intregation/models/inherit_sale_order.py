@@ -7,6 +7,7 @@ class SaleOrder(models.Model):
 
     department_id = fields.Many2one('sale.department', string='Department')
     vehicle_id = fields.Many2one('transport.vehicle.register', string='Vehicle No.')
+    po_id = fields.Many2one('purchase.order', string='P. O. Number')
 
     @api.onchange('department_id')
     def _get_price_on_change(self):

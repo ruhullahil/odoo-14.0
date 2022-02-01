@@ -12,9 +12,9 @@
                     <field name="department_id" options="{'no_create': True, 'no_create_no_edit':True,'no_open': True}"/>
                     <field name="vehicle_id"/>
                 </xpath>
-<!--                <xpath expr="//field[@name='example_field']" position="attributes">-->
-<!--                    <attribute name="invisible">True</attribute>-->
-<!--                </xpath>-->
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="po_id"/>
+                </xpath>
             </field>
         </record>
     </data>

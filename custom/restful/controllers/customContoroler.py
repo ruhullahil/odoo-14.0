@@ -343,9 +343,13 @@ class ModelName(http.Controller):
             order_dict[key] = temp_list if temp_list else value
         order = request.env['sale.order'].sudo().create(order_dict)
         if order:
-            values['success'] = True
-            values['data'] = {
+            order.action_confirm()
+            domain = list()
+            domain.append(('sale_id', '=', order.id))
+            datas = request.env['stock.picking'].sudo().search(domain, limit=1, order='id desc')
+            values = {
                 'order_id': order.id,
+                'picking_id': datas.id,
                 'order_name': order.name,
                 'customer_id': order.partner_id.id,
                 'customer_name': order.partner_id.name
@@ -370,7 +374,6 @@ class ModelName(http.Controller):
             order_dict[key] = temp_list if temp_list else value
         order = request.env['account.payment'].sudo().create(order_dict)
         if order:
-            order.action_post()
             values['success'] = True
             values['data'] = {
                 'order_id': order.id,
