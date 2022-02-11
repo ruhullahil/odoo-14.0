@@ -126,6 +126,7 @@ odoo.define("pos_product_available.PosModel", function(require) {
             return String(parseFloat(value));
         },
         rounded_qty: function() {
+        console.log(this)
             return this.format_float_value(this.qty_available);
         },
     });

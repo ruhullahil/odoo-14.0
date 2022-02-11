@@ -34,7 +34,7 @@
         'demo/demo.xml',
     ],
     'qweb': ['static/src/xml/pos_return.xml',
-             # 'static/src/xml/ClientListScreen/ClientLine.xml',
+             'static/src/xml/ClientListScreen/ClientLine.xml',
              'static/src/xml/ClientListScreen/ClientListScreen.xml',
 
              # 'static/src/xml/ClientListScreen/ClientDetailsEdit.xml',

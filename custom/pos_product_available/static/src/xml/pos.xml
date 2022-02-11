@@ -3,6 +3,25 @@
     Copyright 2018-2019 Kolushov Alexandr <https://it-projects.info/team/KolushovAlexandr>
     License MIT (https://opensource.org/licenses/MIT). -->
 <templates id="template" xml:space="preserve">
+<!--    <t t-inherit="point_of_sale.ProductItem" t-inherit-mode="extension">-->
+
+<!--        <xpath expr="//span[@class='price-tag']" position="before">-->
+<!--            <ProductQty product="props" />-->
+<!--        </xpath>-->
+
+<!--    </t>-->
+
+<!--        <t t-name="ProductQty" owl="1">-->
+<!--            <span class="qty-tag">-->
+<!--                <t t-if="props">-->
+<!--                    <t t-esc="product.rounded_qty()"/>-->
+<!--                </t>-->
+<!--                <t t-else="">-->
+<!--                    0-->
+<!--                </t>-->
+
+<!--            </span>-->
+<!--        </t>-->
     <t t-extend="Product">
         <t t-jquery=".product-img" t-operation="append">
             <t t-if="widget.pos.config.show_qtys &amp;&amp; product.type == 'product'">

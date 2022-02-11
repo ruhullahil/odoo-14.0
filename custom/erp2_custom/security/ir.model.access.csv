@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_erp2_custom_erp2_custom,erp2_custom.erp2_custom,model_erp2_custom_erp2_custom,base.group_user,1,1,1,1
+access_segment_partner,erp2_segment,model_partner_segment,base.group_user,1,1,1,1
+access_sub_segment_partner,erp2_sub_segment,model_partner_sub_segment,base.group_user,1,1,1,1
