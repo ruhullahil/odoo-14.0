@@ -1,0 +1,18 @@
+<odoo>
+    <data>
+<template id="assets" inherit_id="point_of_sale.assets">
+            <xpath expr="." position="inside">
+
+                <script type="text/javascript"
+                        src="/erp2_custom/static/src/js/client_screen_inherit.js"/>
+                <script type="text/javascript"
+                        src="/erp2_custom/static/src/js/db_inherit.js"/>
+                <script type="text/javascript"
+                        src="/erp2_custom/static/src/js/inherit_model.js"/>
+
+
+            </xpath>
+        </template>
+
+    </data>
+</odoo>
