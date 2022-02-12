@@ -4,7 +4,7 @@
     <t t-inherit="point_of_sale.ProductItem" t-inherit-mode="extension">
 
         <xpath expr="//span[@class='price-tag']" position="before">
-            <ProductQty product="props" />
+            <ProductQty product="props"/>
         </xpath>
 
     </t>

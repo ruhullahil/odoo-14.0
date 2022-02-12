@@ -28,6 +28,7 @@
         'views/views.xml',
         'views/templates.xml',
         'views/inherit_pos_config.xml',
+        'views/inherit_res_partner.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

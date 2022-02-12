@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="pos_res_partner_form_inherit" model="ir.ui.view">
+            <field name="name">inherit.res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='contact_addresses']" position="after">
+                    <page name="pos_configure" string="Pos Configure">
+                        <group>
+                            <group>
+                                <field name="is_active"/>
+                                <field name="is_over_limit"/>
+                            </group>
+                            <group>
+                                <field name="pos_credit_limit"/>
+                                <field name="pos_credit_amount"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>
