@@ -29,10 +29,12 @@ class VehicleUnload(models.Model):
     def _get_location(self):
         for rec in self:
             rec.location_id = rec.vehicle_id.related_location
+
     name = fields.Char(string='Name')
     vehicle_id = fields.Many2one('transport.vehicle.register', string='Vehicle')
     location_id = fields.Many2one('stock.location', compute='_get_location', store=True)
     unload_line = fields.One2many('vehicle.unload.line', 'unload_id', string='Vehicle Unload line')
+    refarence_picking = fields.Many2one('stock.picking', string='Ref')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('submitted', 'Submitted'),
@@ -80,6 +82,7 @@ class VehicleUnload(models.Model):
         emideate_trns.process()
         # stock_picking.process()
         stock_picking.button_validate()
+        return stock_picking
 
     def unload(self):
         for rec in self:
@@ -98,13 +101,13 @@ class VehicleUnload(models.Model):
 
     def submit(self):
         if not any(line.lost_condition for line in self.unload_line):
-            self.create_unload_picking()
+            self.refarence_picking = self.create_unload_picking()
             self.state = 'passed'
             return
         self.state = 'need_examined'
 
     def validate(self):
-        self.create_unload_picking()
+        self.refarence_picking = self.create_unload_picking()
         self.state = 'passed'
 
     @api.model
