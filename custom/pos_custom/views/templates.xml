@@ -11,6 +11,11 @@
 <!--                        src="/pos_custom/static/src/js/order_list_screen.js"/>-->
                 <script type="text/javascript"
                         src="/pos_custom/static/src/js/return.js"/>
+                <script type="text/javascript"
+                        src="/pos_custom/static/src/js/ClientLine.js"/>
+                <script type="text/javascript"
+                        src="/pos_custom/static/src/js/ProductCleackOverride.js"/>
+
 
                 <link rel="stylesheet" href="/pos_custom/static/src/css/pos_return.css" />
             </xpath>

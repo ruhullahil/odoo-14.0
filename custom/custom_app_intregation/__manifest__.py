@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'product', 'sale', 'stock', 'purchase'],
+    'depends': ['base', 'product', 'sale', 'stock', 'purchase', 'point_of_sale'],
 
     # always loaded
     'data': [
@@ -35,9 +35,11 @@
         'views/customer_product_return.xml',
         'views/vehicle_setup.xml',
         'views/inherit_product_template.xml',
-        'views/vehicle_unload.xml'
+        'views/vehicle_unload.xml',
         # 'wizard/sale_report_by_dept.xml',
         # 'reports/sale_report_by_dept.xml',
+        'reports/current_stock_report.xml',
+        'wizard/current_stock_report.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

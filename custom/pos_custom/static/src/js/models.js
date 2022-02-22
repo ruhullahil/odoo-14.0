@@ -13,7 +13,7 @@ var session = require('web.session');
 
 var exports = {};
 
-models.load_models({
+models.load_models([{
         model:  'product.product',
         fields: ['display_name', 'lst_price', 'standard_price', 'categ_id', 'pos_categ_id', 'taxes_id',
                  'barcode', 'default_code', 'to_weight', 'uom_id', 'description_sale', 'description',
@@ -66,7 +66,20 @@ models.load_models({
                 return new exports.Product({}, product);
             }));
         },
-    });
+    },
+    {
+        model:  'res.partner',
+        label: 'load_partners',
+        fields: ['name','street','city','state_id','country_id','vat','lang',
+                 'phone','zip','mobile','email','barcode','write_date',
+                 'property_account_position_id','property_product_pricelist',
+                 'pos_credit_limit','pos_credit_amount','is_active','is_over_limit'],
+        loaded: function(self,partners){
+            self.partners = partners;
+            console.log('partners : ',partners)
+            self.db.add_partners(partners);
+        },
+    }]);
 exports.Product = Backbone.Model.extend({
     initialize: function(attr, options){
         _.extend(this, options);

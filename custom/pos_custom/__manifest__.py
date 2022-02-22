@@ -28,13 +28,14 @@
         'views/views.xml',
         'views/templates.xml',
         'views/inherit_pos_config.xml',
+        'views/inherit_res_partner.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
     'qweb': ['static/src/xml/pos_return.xml',
-             # 'static/src/xml/ClientListScreen/ClientLine.xml',
+             'static/src/xml/ClientListScreen/ClientLine.xml',
              'static/src/xml/ClientListScreen/ClientListScreen.xml',
 
              # 'static/src/xml/ClientListScreen/ClientDetailsEdit.xml',

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <report
+                id="report_current_stock_report"
+                model="vehicle.current.stock"
+                string="Current Stock Report"
+                name="custom_app_intregation.report_current_stock_view"
+                report_type="qweb-pdf"/>
+
+        <template id="report_current_stock_view">
+            <t t-call="web.html_container">
+<!--                <t t-foreach="docs" t-as="doc">-->
+                    <t t-call="web.external_layout">
+<!--                        <p>test print</p>-->
+                        <table class="table table-sm o_main_table">
+                            <!-- In case we want to repeat the header, remove "display: table-row-group" -->
+                            <thead style="display: table-row-group">
+                                <tr>
+                                    <th name="th_description" class="text-left">Description</th>
+                                    <th name="th_quantity" class="text-right">Quantity</th>
+                                    <th name="th_priceunit" class="text-right">Available Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody class="sale_tbody">
+                                <t t-foreach="data['products_qty']" t-as="line">
+                                    <tr>
+                                        <td name="td_name"><span t-esc="line.product_id.product_tmpl_id.name"/></td>
+                                        <td name="td_quantity" class="text-right">
+                                            <span t-esc="line.quantity"/>
+                                            <span t-esc="line.product_id.product_tmpl_id.uom_id.name"/>
+                                        </td>
+                                        <td name="td_priceunit" class="text-right">
+                                            <span t-esc="(line.quantity-line.reserved_quantity)"/>
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+<!--                </t>-->
+            </t>
+        </template>
+
+    </data>
+</odoo>
